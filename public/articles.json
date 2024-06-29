@@ -1,0 +1,24 @@
+{
+  "posts": [
+    {
+      "articleId": 1,
+      "UserID": "A",
+      "content": "Content of post 1"
+    },
+    {
+      "articleId": 2,
+      "UserID": "A",
+      "content": "Content of post 2"
+    },
+    {
+      "articleId": 3,
+      "UserID": "B",
+      "content": "Content of post 3"
+    },
+    {
+      "articleId": 4,
+      "UserID": "C",
+      "content": "Content of post 4"
+    }
+  ]
+}

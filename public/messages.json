@@ -1,0 +1,28 @@
+{
+  "posts": [
+    {
+      "messageId": 1,
+      "UserID": "B",
+      "articleId": 1,
+      "content": "Content of post 1"
+    },
+    {
+      "messageId": 2,
+      "UserID": "B",
+      "articleId": 2,
+      "content": "Content of post 2"
+    },
+    {
+      "messageId": 3,
+      "UserID": "C",
+      "articleId": 1,
+      "content": "Updated Content"
+    },
+    {
+      "messageId": 4,
+      "UserID": "A",
+      "articleId": 2,
+      "content": "Updated Content"
+    }
+  ]
+}
