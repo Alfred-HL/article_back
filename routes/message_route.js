@@ -1,19 +1,18 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
-// const ServiceMessage = require('../services/message')
-const { allMessage, postMessage, updatedMessage, deleteMessage } = require('../services/message')
-// const  { readAll } = require('../services/message')
-// const { readMessage } = require('../models/message')
+const { MessageService } = require('../services/message')
+
 
 const router = express.Router()
 router.use(bodyParser.json());
 
+const msgService = new MessageService()
 
 //to get all messages
 router.get('/', async (req, res) => {
   try {
-    const messageData = await allMessage();
+    const messageData = await msgService.allMessage();
     res.json(messageData)
   } catch(error) {
     console.error('Error fetching messages:', error);
@@ -25,7 +24,7 @@ router.get('/', async (req, res) => {
 router.get('/post',  async (req, res) => {
   const newPost = req.query;
   try {
-    const newMessage = await postMessage(newPost);
+    const newMessage = await msgService.postMessage(newPost);
     res.json(newMessage)
   } catch(error) {
     console.error('Error posting messages:', error);
@@ -38,7 +37,7 @@ router.get('/post',  async (req, res) => {
 router.get('/update', async (req, res) => {
   const updatedPost = req.query
   try {
-    const updatedContent = await updatedMessage(updatedPost);
+    const updatedContent = await msgService.updatedMessage(updatedPost);
     res.json(updatedContent)
   } catch(error) {
     console.error('Error updating messages:', error);
@@ -51,15 +50,13 @@ router.get('/update', async (req, res) => {
 router.get('/delete', async (req, res) => {
   const postId = Number(req.query.id);
   try {
-    const deleteContent = await deleteMessage(postId);
+    const deleteContent = await msgService.deleteMessage(postId);
     res.json(deleteContent)
   } catch (error) {
     console.error('Error deleting messages:', error);
     res.status(500).json({ error: 'Failed to delete messages' });
   }
 })
-
-
 
 
 module.exports = router

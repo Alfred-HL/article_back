@@ -1,15 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
-// const Message = require('../models/message')
-// const { readAll } = require('../models/message')
-const { readMessage, writeMessage, updateMsg, deleteMsg } = require('../models/message')
+const { readMessage, MessageEdit } = require('../models/message')
 
 
 const router = express.Router()
 router.use(bodyParser.json());
 
-function allMessage() {
+const messageFunc = new MessageEdit()
+
+class MessageService {
+  allMessage() {
   return new Promise((resolve, reject) => {
     readMessage((err, data) => {
      if (err) {
@@ -22,9 +23,9 @@ function allMessage() {
 })
 }
 
-function postMessage(newMessage) {
+  postMessage(newMessage) {
   return new Promise((resolve, reject) => {
-    writeMessage(newMessage, (err, data) => {
+    messageFunc.writeMessage(newMessage, (err, data) => {
       if (err)  {
         console.error(err);
         reject("Error posting message");
@@ -35,9 +36,9 @@ function postMessage(newMessage) {
   })
 }
 
-function updatedMessage(updatedMessage) {
+  updatedMessage(updatedMessage) {
   return new Promise((resolve, reject) => {
-    updateMsg(updatedMessage, (err, data) => {
+    messageFunc.updateMsg(updatedMessage, (err, data) => {
       if (err) {
         console.error(err);
         reject("Error updating message");
@@ -48,9 +49,9 @@ function updatedMessage(updatedMessage) {
   })
 }
 
-function deleteMessage(postId) {
+  deleteMessage(postId) {
   return new Promise((resolve, reject) => {
-    deleteMsg(postId, (err, data) => {
+    messageFunc.deleteMsg(postId, (err, data) => {
       if (err) {
         console.error(err);
         reject("Error deleting message");
@@ -62,11 +63,8 @@ function deleteMessage(postId) {
 
 }
 
-
+}
 
 module.exports = {
-  allMessage,
-  postMessage,
-  updatedMessage,
-  deleteMessage
+  MessageService
 }
