@@ -10,7 +10,7 @@
       "messageId": 2,
       "UserID": "B",
       "articleId": 2,
-      "content": "Content of post 2"
+      "content": "Updated Content"
     },
     {
       "messageId": 3,
@@ -22,13 +22,7 @@
       "messageId": 4,
       "UserID": "A",
       "articleId": 2,
-      "content": "Updated Content"
-    },
-    {
-      "articleId": "1",
-      "UserId": "F",
-      "content": "Updated Content",
-      "messageId": 5
+      "content": "content of 4"
     }
   ]
 }

@@ -33,6 +33,20 @@ router.get('/post',  async (req, res) => {
 }
 )
 
+//to search for a message
+router.get('/search', async(req, res) => {
+  const searchMsg = req.query;
+  // res.send(searchMsg)
+  try {
+    const searchId = await msgService.searchMessage(searchMsg)
+    res.json(searchId)
+  } catch (error) {
+    console.error('Error searching for messages:', error);
+    res.status(500).json({ error: 'Failed to search for messages' });
+  }
+})
+
+
 //to update message
 router.get('/update', async (req, res) => {
   const updatedPost = req.query
@@ -48,7 +62,7 @@ router.get('/update', async (req, res) => {
 
 //to delete message
 router.get('/delete', async (req, res) => {
-  const postId = Number(req.query.id);
+  const postId = Number(req.query.messageId);
   try {
     const deleteContent = await msgService.deleteMessage(postId);
     res.json(deleteContent)

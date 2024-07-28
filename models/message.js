@@ -3,25 +3,39 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 
 
-//read messages.json file
-function readMessage(callback) {
-  fs.readFile('./public/messages.json', (err, data) => {
-    if (err) {
-      console.error(err);
-      callback(err, null); // Pass error to callback
-      return;
-    }
+// read messages.json file
+// function readMessage(callback) {
+//   fs.readFile('./public/messages.json', (err, data) => {
+//     if (err) {
+//       console.error(err);
+//       callback(err, null); // Pass error to callback
+//       return;
+//     }
+//     try {
+//       const content = JSON.parse(data).posts;
+//       callback(null, content); // Pass content to callback
+//     } catch (error) {
+//       console.error('Error parsing JSON:', error);
+//       callback(error, null); // Pass parsing error to callback
+//     }
+//   });
+// }
 
-    try {
-      const content = JSON.parse(data).posts;
-      callback(null, content); // Pass content to callback
-    } catch (error) {
-      console.error('Error parsing JSON:', error);
-      callback(error, null); // Pass parsing error to callback
-    }
-  });
+// read messages.json file
+const messageData = readMessages().posts
+function readMessages() {
+  try {
+    const data = fs.readFileSync('./public/messages.json', 'utf8');
+    const messages = JSON.parse(data);
+    return messages;
+  } catch (err) {
+    console.error('Error reading or parsing the file:', err);
+    throw err;
+  }
 }
 
+
+//fs用promise包，避免callback
 //write to message.json file
 function editMessage(messages, callback) {
   fs.writeFile('./public/messages.json', JSON.stringify({ posts: messages }, null, 2), (err) => {
@@ -34,21 +48,51 @@ function editMessage(messages, callback) {
   });
 }
 
+// function editMessage(messages){
+//   return new Promise((resolve, reject) => {
+//     fs.writeFile('./public/messages.json', JSON.stringify({ posts: messages }, null, 2), (err) => {
+//       if (err) {
+//         reject('Error writing file')
+//       } else {
+//         resolve(null)
+//       }
+//     })
+//   })
+// }
+
+// read messages.json file
+
 //class with add/update/delete message function
 class MessageEdit {
-  writeMessage(newMessage, callback) {
-    readMessage((err, messages) => {
-      if (err) {
-        callback(err);
-        return;
-     }
+  // writeMessage(newMessage, callback) {
+    // readMessage((err, messages) => {
+    //   if (err) {
+    //     callback(err);
+    //     return;
+    //  }
 
-     const lastId = messages.length > 0 ? messages[messages.length - 1].messageId : 0;
-     newMessage.messageId = lastId + 1;
+    //  const lastId = messages.length > 0 ? messages[messages.length - 1].messageId : 0;
+    //  newMessage.messageId = lastId + 1;
 
-     messages.push(newMessage);
+    //  messages.push(newMessage);
 
-     editMessage(messages, (err) => {
+    //  editMessage(messages, (err) => {
+    //     if (err) {
+    //       callback(err);
+    //    } else {
+    //       callback(null, newMessage);
+    //     }
+    //  });
+  //  })
+// }
+
+  writeMessage(newMessage, callback){
+    const lastId = messageData.length > 0 ? messageData[messageData.length - 1].messageId : 0;
+    newMessage.messageId = lastId + 1;
+
+    messageData.push(newMessage);
+    
+    editMessage(messageData, (err) => {
         if (err) {
           callback(err);
        } else {
@@ -56,30 +100,63 @@ class MessageEdit {
         }
      });
 
-   })
-}
+  }
+
+  // searchMsg(index, callback) {
+  //   // const postId = Number(searchId.messageId)
+
+  //   readMessage((err, messages) => {
+  //     if (err) {
+  //       callback(err);
+  //       return;
+  //     }
+  //     const searchMsg = messages[index]
+  //     callback(null, searchMsg)
+  
+  //   })
+  // }
+
+
+  searchMsg(index, callback) {
+    const searchMsg = messageData[index]
+    callback(null, searchMsg)
+  }
 
 //modify message
+//   updateMsg(updatedMessage, callback) {
+//     const postId = Number(updatedMessage.messageId);
+//     const updatedContent = updatedMessage.content;
+
+//     readMessage((err, messages) => {
+//       if (err) {
+//         callback(err);
+//         return;
+//       }
+
+//       const index = messages.findIndex(p => p.messageId === postId);
+
+//       messages[index].content = updatedContent
+
+//     editMessage(messages, (err) => {
+//       if (err) {
+//         callback(err);
+//       } else {
+//         callback(null, updatedMessage);
+//       }
+//     });
+//   }
+//   )
+// }
+
   updateMsg(updatedMessage, callback) {
     const postId = Number(updatedMessage.messageId);
     const updatedContent = updatedMessage.content;
 
-    readMessage((err, messages) => {
-      if (err) {
-        callback(err);
-        return;
-      }
+    const index = messageData.findIndex(p => p.messageId === postId);
 
-      const index = messages.findIndex(p => p.messageId === postId);
+    messageData[index].content = updatedContent
 
-      if (index === -1) {
-        res.status(404).send('Post not found');
-        return;
-      }
-
-      messages[index].content = updatedContent
-
-    editMessage(messages, (err) => {
+    editMessage(messageData, (err) => {
       if (err) {
         callback(err);
       } else {
@@ -87,33 +164,42 @@ class MessageEdit {
       }
     });
   }
-  )
-}
-
+      
 //delete message
-  deleteMsg(postId, callback) {
-    readMessage((err, messages) => {
-      if (err) {
-        callback(err);
-        return;
-      }
-    const index = messages.findIndex(p => p.messageId === postId);
+//   deleteMsg(index, callback) {
+//     readMessage((err, messages) => {
+//       if (err) {
+//         callback(err);
+//         return;
+//       }
 
-    const deletedPost = messages.splice(index, 1)[0];
+//     const deletedPost = messages.splice(index, 1)[0];
 
-    editMessage(messages, (err) => {
+//     editMessage(messages, (err) => {
+//       if (err) {
+//         callback(err);
+//       } else {
+//         callback(null, deletedPost);
+//       }
+//     });
+
+//   })
+// }
+  deleteMsg(index, callback) {
+    const deletedPost = messageData.splice(index, 1)[0];
+
+    editMessage(messageData, (err) => {
       if (err) {
         callback(err);
       } else {
         callback(null, deletedPost);
       }
     });
+  }
 
-  })
-}
 }
 
 module.exports = { 
-  readMessage,
+readMessages,
   MessageEdit
 }
